@@ -29,7 +29,7 @@ jobs:
           wget -O emacs.keystore "https://raw.githubusercontent.com/emacs-mirror/emacs/master/java/emacs.keystore"
           
           echo "Downloading Emacs APK from SourceForge..."
-          wget -O emacs.apk "https://sourceforge.net/projects/android-ports-for-gnu-emacs/files/termux/emacs-30.0.93-35-arm64-v8a.apk"
+          wget -O emacs.apk "https://sourceforge.net/projects/android-ports-for-gnu-emacs/files/termux/emacs-31.1.90-29-arm64-v8a.apk"
 
       # Passo 4: Reassina o APK do Termux com a chave do Emacs
       - name: Sign Termux APK
