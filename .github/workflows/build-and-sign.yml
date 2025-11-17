@@ -38,16 +38,20 @@ jobs:
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
 
+      - name: Set BUILD_TOOLS_VERSION
+        run: |
+          BUILD_TOOLS_VERSION=$(ls "$ANDROID_SDK_ROOT/build-tools" | sort -V | tail -n 1)
+          echo "BUILD_TOOLS_VERSION=$BUILD_TOOLS_VERSION" >> $GITHUB_ENV
+          echo "Using build-tools version: $BUILD_TOOLS_VERSION"
+
       - name: Sign Termux APK
         run: |
           echo "Signing Termux APK with Emacs key..."
-          BUILD_TOOLS_VERSION=$(ls "$ANDROID_SDK_ROOT/build-tools" | sort -V | tail -n 1)
           "$ANDROID_SDK_ROOT/build-tools/$BUILD_TOOLS_VERSION/apksigner" sign --v2-signing-enabled --ks emacs.keystore -debuggable-apk-permitted --ks-pass pass:${{ secrets.KEYSTORE_PASSWORD }} termux.apk
 
       - name: Verify APK signature
         run: |
           echo "Verifying Termux APK signature..."
-          BUILD_TOOLS_VERSION=$(ls "$ANDROID_SDK_ROOT/build-tools" | sort -V | tail -n 1)
           "$ANDROID_SDK_ROOT/build-tools/$BUILD_TOOLS_VERSION/apksigner" verify -v termux.apk
 
       - name: Upload APKs as artifacts
