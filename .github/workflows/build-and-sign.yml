@@ -1,0 +1,48 @@
+# Nome do fluxo de trabalho que aparecerá na aba Actions do GitHub
+name: Build and Sign Termux for Android Emacs
+
+# Disparador: Permite executar o fluxo manualmente na aba Actions
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    # Executa em uma máquina virtual Ubuntu
+    runs-on: ubuntu-latest
+
+    steps:
+      # Passo 1: Faz o checkout do código do repositório
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Passo 2: Configura o ambiente Android SDK, incluindo as Build-Tools
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      # Passo 3: Baixa os arquivos necessários
+      - name: Download required files
+        run: |
+          echo "Downloading Termux APK from F-Droid..."
+          wget -O termux.apk "https://f-droid.org/repo/com.termux_1022.apk"
+          
+          echo "Downloading Emacs signing key..."
+          wget -O emacs.keystore "https://raw.githubusercontent.com/emacs-mirror/emacs/master/java/emacs.keystore"
+          
+          echo "Downloading Emacs APK from SourceForge..."
+          wget -O emacs.apk "https://sourceforge.net/projects/android-ports-for-gnu-emacs/files/termux/emacs-30.0.93-35-arm64-v8a.apk"
+
+      # Passo 4: Reassina o APK do Termux com a chave do Emacs
+      - name: Sign Termux APK
+        run: |
+          echo "Signing Termux APK with Emacs key..."
+          apksigner sign --v2-signing-enabled --ks emacs.keystore -debuggable-apk-permitted --ks-pass pass:emacs1 termux.apk
+
+      # Passo 5: Disponibiliza os APKs para download
+      - name: Upload APKs as artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-emacs-termux-apks
+          path: |
+            termux.apk
+            emacs.apk
+
