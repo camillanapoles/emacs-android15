@@ -11,20 +11,17 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # Passo 0: Restaurar o cache dos downloads (NOVO)
+      # Passo 0: Restaurar o cache dos downloads
       - name: Cache downloaded files
         id: cache-downloads
         uses: actions/cache@v4
         with:
-          # O caminho onde os arquivos serão salvos/restaurados
           path: |
             termux.apk
             emacs.apk
             emacs.keystore
-          # A chave do cache. Se o arquivo .yml mudar, a chave muda e o cache é invalidado.
           key: ${{ runner.os }}-downloads-${{ hashFiles('**/build-and-sign.yml') }}
 
-      # Passo 1: Baixar os arquivos (APENAS se o cache não foi encontrado)
       - name: Download required files
         if: steps.cache-downloads.outputs.cache-hit != 'true'
         run: |
@@ -36,21 +33,27 @@ jobs:
           wget -O emacs.keystore "https://raw.githubusercontent.com/emacs-mirror/emacs/master/java/emacs.keystore"
           
           echo "Downloading Emacs APK from SourceForge..."
-          # CORREÇÃO: Link direto com /download no final
           wget -O emacs.apk "https://sourceforge.net/projects/android-ports-for-gnu-emacs/files/termux/emacs-30.1.90-29-arm64-v8a.apk/download"
 
+      # PASSO 2 (CORRIGIDO): Configurar o Android SDK de forma explícita e confiável
       - name: Set up Android SDK
-        uses: android-actions/setup-android@v3
+        uses: maxim-lobanov/setup-android-actions@v1
+        with:
+          api-level: 34 # Qualquer API level recente (ex: Android 14)
+          build-tools: 35.0.0 # A mesma versão que estava dando erro, mas agora instalada corretamente
+          # Esta ação automaticamente adiciona as build-tools ao PATH
 
+      # Passo 3: Assinar o APK (AGORA COM O COMANDO SIMPLES)
       - name: Sign Termux APK
         run: |
           echo "Signing Termux APK with Emacs key..."
-          $ANDROID_SDK_ROOT/build-tools/*/apksigner sign --v2-signing-enabled --ks emacs.keystore -debuggable-apk-permitted --ks-pass pass:emacs1 termux.apk
+          # Como a ação adicionou as build-tools ao PATH, podemos chamar 'apksigner' diretamente!
+          apksigner sign --v2-signing-enabled --ks emacs.keystore -debuggable-apk-permitted --ks-pass pass:emacs1 termux.apk
 
       - name: Verify APK signature
         run: |
           echo "Verifying Termux APK signature..."
-          $ANDROID_SDK_ROOT/build-tools/*/apksigner verify -v termux.apk
+          apksigner verify -v termux.apk
 
       - name: Upload APKs as artifacts
         uses: actions/upload-artifact@v4
