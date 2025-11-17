@@ -45,7 +45,7 @@ jobs:
       - name: Sign Termux APK
         run: |
           echo "Signing Termux APK with Emacs key..."
-          $ANDROID_SDK_ROOT/build-tools/*/apksigner sign --v2-signing-enabled --ks emacs.keystore -debuggable-apk-permitted --ks-pass pass:emacs1 termux.apk
+          $ANDROID_SDK_ROOT/build-tools/*/apksigner sign --v2-signing-enabled --ks emacs.keystore -debuggable-apk-permitted --ks-pass pass:${{ secrets.KEYSTORE_PASSWORD }} termux.apk
 
       - name: Verify APK signature
         run: |
