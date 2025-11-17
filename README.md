@@ -217,6 +217,6 @@ Se você precisa usar um keystore personalizado (não o do Emacs oficial), consi
 - **Artifacts privados:** Use GitHub Packages ou outro registro de artifacts privado para armazenar o keystore de forma segura.
 
 **Nunca:** 
-- ❌ Commite keystores no Git
+- ❌ Cometa keystores no Git
 - ❌ Compartilhe senhas em documentação ou código
 - ❌ Use keystores em repositórios públicos sem criptografia adequada
