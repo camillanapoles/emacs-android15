@@ -41,7 +41,7 @@ jobs:
       - name: Determine build tools version
         id: build-tools
         run: |
-          BUILD_TOOLS_VERSION=$(find "$ANDROID_SDK_ROOT/build-tools" -mindepth 1 -maxdepth 1 -type d -printf '%f\n' | sort -V | tail -n 1)
+          BUILD_TOOLS_VERSION=$(find "$ANDROID_SDK_ROOT/build-tools" -mindepth 1 -maxdepth 1 -type d | sed 's|.*/||' | sort -V | tail -n 1)
           echo "BUILD_TOOLS_VERSION=$BUILD_TOOLS_VERSION" >> "$GITHUB_ENV"
           echo "Using Android Build Tools version: $BUILD_TOOLS_VERSION"
 

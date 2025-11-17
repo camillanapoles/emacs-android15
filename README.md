@@ -116,7 +116,7 @@ jobs:
     *   Valor: A senha do seu keystore (obtenha a senha correta do arquivo keystore que você está usando)
     *   Clique em **"Add secret"**.
     
-    **Por que isso é importante?** Usar GitHub Secrets mantém senhas seguras e fora do código-fonte. É uma prática essencial de segurança em CI/CD! Nunca cometa senhas ou keystores no repositório.
+    **Por que isso é importante?** Usar GitHub Secrets mantém senhas seguras e fora do código-fonte. É uma prática essencial de segurança em CI/CD! Nunca faça commit de senhas ou keystores no repositório.
 
 3.  **Execute o Workflow:**
     *   Vá para a aba **Actions** do seu repositório.
@@ -217,6 +217,6 @@ Se você precisa usar um keystore personalizado (não o do Emacs oficial), consi
 - **Artifacts privados:** Use GitHub Packages ou outro registro de artifacts privado para armazenar o keystore de forma segura.
 
 **Nunca:** 
-- ❌ Cometa keystores no Git
+- ❌ Faça commit de keystores no Git
 - ❌ Compartilhe senhas em documentação ou código
 - ❌ Use keystores em repositórios públicos sem criptografia adequada
