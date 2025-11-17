@@ -214,3 +214,10 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Build and development tools
+actionlint
+
+# Android keystore files (NEVER commit these!)
+*.keystore
+*.jks
