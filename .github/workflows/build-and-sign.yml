@@ -22,14 +22,15 @@ jobs:
       # Passo 3: Baixa os arquivos necessários
       - name: Download required files
         run: |
+          echo "Downloading Emacs APK from SourceForge..."
+          wget -O emacs.apk https://sourceforge.net/projects/android-ports-for-gnu-emacs/files/emacs-30.1.90-29-arm64-v8a.apk/download
+
           echo "Downloading Termux APK from F-Droid..."
           wget -O termux.apk "https://f-droid.org/repo/com.termux_1022.apk"
           
           echo "Downloading Emacs signing key..."
           wget -O emacs.keystore "https://raw.githubusercontent.com/emacs-mirror/emacs/master/java/emacs.keystore"
           
-          echo "Downloading Emacs APK from SourceForge..."
-          wget -O emacs.apk "https://sourceforge.net/projects/android-ports-for-gnu-emacs/files/termux/emacs-31.1.90-29-arm64-v8a.apk"
 
       # Passo 4: Reassina o APK do Termux com a chave do Emacs
       - name: Sign Termux APK
