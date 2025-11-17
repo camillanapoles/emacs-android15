@@ -41,12 +41,14 @@ jobs:
       - name: Sign Termux APK
         run: |
           echo "Signing Termux APK with Emacs key..."
-          $ANDROID_SDK_ROOT/build-tools/*/apksigner sign --v2-signing-enabled --ks emacs.keystore -debuggable-apk-permitted --ks-pass pass:${{ secrets.KEYSTORE_PASSWORD }} termux.apk
+          BUILD_TOOLS_VERSION=$(ls "$ANDROID_SDK_ROOT/build-tools" | sort -V | tail -n 1)
+          "$ANDROID_SDK_ROOT/build-tools/$BUILD_TOOLS_VERSION/apksigner" sign --v2-signing-enabled --ks emacs.keystore -debuggable-apk-permitted --ks-pass pass:${{ secrets.KEYSTORE_PASSWORD }} termux.apk
 
       - name: Verify APK signature
         run: |
           echo "Verifying Termux APK signature..."
-          $ANDROID_SDK_ROOT/build-tools/*/apksigner verify -v termux.apk
+          BUILD_TOOLS_VERSION=$(ls "$ANDROID_SDK_ROOT/build-tools" | sort -V | tail -n 1)
+          "$ANDROID_SDK_ROOT/build-tools/$BUILD_TOOLS_VERSION/apksigner" verify -v termux.apk
 
       - name: Upload APKs as artifacts
         uses: actions/upload-artifact@v4
