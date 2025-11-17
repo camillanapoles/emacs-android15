@@ -116,7 +116,7 @@ jobs:
     *   Valor: A senha do seu keystore (obtenha a senha correta do arquivo keystore que você está usando)
     *   Clique em **"Add secret"**.
     
-    **Por que isso é importante?** Usar GitHub Secrets mantém senhas seguras e fora do código-fonte. É uma prática essencial de segurança em CI/CD! Nunca commite senhas ou keystores no repositório.
+    **Por que isso é importante?** Usar GitHub Secrets mantém senhas seguras e fora do código-fonte. É uma prática essencial de segurança em CI/CD! Nunca cometa senhas ou keystores no repositório.
 
 3.  **Execute o Workflow:**
     *   Vá para a aba **Actions** do seu repositório.
