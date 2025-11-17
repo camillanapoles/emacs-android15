@@ -35,25 +35,18 @@ jobs:
           echo "Downloading Emacs APK from SourceForge..."
           wget -O emacs.apk "https://sourceforge.net/projects/android-ports-for-gnu-emacs/files/termux/emacs-30.1.90-29-arm64-v8a.apk/download"
 
-      # PASSO 2 (CORRIGIDO): Configurar o Android SDK de forma explícita e confiável
       - name: Set up Android SDK
-        uses: maxim-lobanov/setup-android-actions@v1
-        with:
-          api-level: 34 # Qualquer API level recente (ex: Android 14)
-          build-tools: 35.0.0 # A mesma versão que estava dando erro, mas agora instalada corretamente
-          # Esta ação automaticamente adiciona as build-tools ao PATH
+        uses: android-actions/setup-android@v3
 
-      # Passo 3: Assinar o APK (AGORA COM O COMANDO SIMPLES)
       - name: Sign Termux APK
         run: |
           echo "Signing Termux APK with Emacs key..."
-          # Como a ação adicionou as build-tools ao PATH, podemos chamar 'apksigner' diretamente!
-          apksigner sign --v2-signing-enabled --ks emacs.keystore -debuggable-apk-permitted --ks-pass pass:emacs1 termux.apk
+          $ANDROID_SDK_ROOT/build-tools/*/apksigner sign --v2-signing-enabled --ks emacs.keystore -debuggable-apk-permitted --ks-pass pass:${{ secrets.KEYSTORE_PASSWORD }} termux.apk
 
       - name: Verify APK signature
         run: |
           echo "Verifying Termux APK signature..."
-          apksigner verify -v termux.apk
+          $ANDROID_SDK_ROOT/build-tools/*/apksigner verify -v termux.apk
 
       - name: Upload APKs as artifacts
         uses: actions/upload-artifact@v4

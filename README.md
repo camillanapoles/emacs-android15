@@ -107,11 +107,23 @@ jobs:
 ### 🚀 Parte 4: Como Usar (Para Você)
 
 1.  **Crie o Repositório:** Crie um repositório público no GitHub com os arquivos acima.
-2.  **Execute o Workflow:**
+
+2.  **Configure o Secret da Senha (IMPORTANTE):**
+    *   Vá para as **Settings** (Configurações) do seu repositório.
+    *   No menu lateral, clique em **Secrets and variables** → **Actions**.
+    *   Clique em **"New repository secret"**.
+    *   Nome do secret: `KEYSTORE_PASSWORD`
+    *   Valor: `emacs1` (a senha do keystore do Emacs)
+    *   Clique em **"Add secret"**.
+    
+    **Por que isso é importante?** Usar GitHub Secrets mantém senhas seguras e fora do código-fonte. É uma prática essencial de segurança em CI/CD!
+
+3.  **Execute o Workflow:**
     *   Vá para a aba **Actions** do seu repositório.
     *   Selecione o fluxo "Build and Sign Termux for Android Emacs".
     *   Clique em **"Run workflow"** e depois em **"Run workflow"** novamente para confirmar.
-3.  **Baixe os Resultados:**
+
+4.  **Baixe os Resultados:**
     *   Aguarde a execução terminar (cerca de 1-2 minutos).
     *   Na página da execução, clique no artefato chamado `android-emacs-termux-apks`.
     *   Será baixado um arquivo `.zip`. Extraia-o. Dentro dele estarão o `termux.apk` e o `emacs.apk`.
@@ -147,3 +159,27 @@ Com os APKs prontos, a instalação no seu Nothing Phone 2 é trivial e garantid
 Com este método, você transformou um processo manual e propenso a erros em um sistema automatizado, versionado e 100% reproduzível. Qualquer pessoa (inclusive você no futuro) pode simplesmente executar o workflow no GitHub e obter os APKs corretos para o Android 15 sem se preocupar com links quebrados ou versões incompatíveis.
 
 Agora você tem um pipeline de CI/CD para deploy de aplicativos Android. É uma solução robusta, elegante e que atende perfeitamente à sua necessidade.
+
+---
+
+### 🎓 Aprendendo CI/CD: O que este workflow ensina
+
+Este projeto é um excelente exemplo prático de conceitos importantes de DevOps e CI/CD:
+
+1. **Automação**: Em vez de baixar e assinar manualmente os APKs toda vez, o workflow faz tudo automaticamente.
+
+2. **Cache**: O workflow usa `actions/cache@v4` para armazenar os arquivos baixados, evitando downloads repetidos e economizando tempo.
+
+3. **Segurança**: A senha do keystore não está no código (hardcoded), mas sim em GitHub Secrets (`${{ secrets.KEYSTORE_PASSWORD }}`). Isso é fundamental!
+
+4. **Reprodutibilidade**: Qualquer pessoa pode executar este workflow e obter exatamente os mesmos resultados.
+
+5. **Artifacts**: Os APKs gerados são disponibilizados como "artifacts" do GitHub Actions, facilitando o download.
+
+6. **Workflow Dispatch**: O `workflow_dispatch` permite executar o workflow manualmente quando necessário, ideal para este caso de uso.
+
+**Próximos passos para aprender mais:**
+- Experimente adicionar testes automatizados ao workflow
+- Tente usar diferentes triggers (ex: `push`, `pull_request`)
+- Explore notificações quando o workflow terminar (Slack, email, etc.)
+- Adicione validação dos APKs gerados
