@@ -90,7 +90,7 @@ jobs:
       - name: Sign Termux APK
         run: |
           echo "Signing Termux APK with Emacs key..."
-          apksigner sign --v2-signing-enabled --ks emacs.keystore -debuggable-apk-permitted --ks-pass pass:emacs1 termux.apk
+          apksigner sign --v2-signing-enabled --ks emacs.keystore -debuggable-apk-permitted --ks-pass pass:${{ secrets.KEYSTORE_PASSWORD }} termux.apk
 
       # Passo 5: Disponibiliza os APKs para download
       - name: Upload APKs as artifacts
@@ -113,10 +113,19 @@ jobs:
     *   No menu lateral, clique em **Secrets and variables** → **Actions**.
     *   Clique em **"New repository secret"**.
     *   Nome do secret: `KEYSTORE_PASSWORD`
-    *   Valor: `emacs1` (a senha do keystore do Emacs)
+    *   Valor: A senha do keystore do Emacs (obtenha do repositório oficial ou de uma fonte segura)
     *   Clique em **"Add secret"**.
     
     **Por que isso é importante?** Usar GitHub Secrets mantém senhas seguras e fora do código-fonte. É uma prática essencial de segurança em CI/CD!
+    
+    **⚠️ ATENÇÃO - Segurança do Keystore:**
+    *   **NUNCA** faça commit da senha do keystore no código-fonte ou na documentação.
+    *   **NUNCA** faça commit do arquivo keystore (`*.keystore`, `*.jks`) no repositório. O arquivo já está listado no `.gitignore` para prevenir isso.
+    *   O workflow baixa o keystore automaticamente do repositório oficial durante a execução.
+    *   Se precisar usar um keystore personalizado, considere:
+        - Armazená-lo em um serviço seguro (ex: AWS Secrets Manager, Azure Key Vault)
+        - Buscar o arquivo durante o workflow de uma fonte segura
+        - Ou adicionar como um GitHub Secret codificado em base64 e decodificar durante o workflow
 
 3.  **Execute o Workflow:**
     *   Vá para a aba **Actions** do seu repositório.
