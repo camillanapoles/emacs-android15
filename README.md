@@ -90,7 +90,7 @@ jobs:
       - name: Sign Termux APK
         run: |
           echo "Signing Termux APK with Emacs key..."
-          apksigner sign --v2-signing-enabled --ks emacs.keystore -debuggable-apk-permitted --ks-pass pass:emacs1 termux.apk
+          apksigner sign --v2-signing-enabled --ks emacs.keystore -debuggable-apk-permitted --ks-pass pass:${{ secrets.KEYSTORE_PASSWORD }} termux.apk
 
       # Passo 5: Disponibiliza os APKs para download
       - name: Upload APKs as artifacts
@@ -113,10 +113,10 @@ jobs:
     *   No menu lateral, clique em **Secrets and variables** → **Actions**.
     *   Clique em **"New repository secret"**.
     *   Nome do secret: `KEYSTORE_PASSWORD`
-    *   Valor: `emacs1` (a senha do keystore do Emacs)
+    *   Valor: A senha do seu keystore (obtenha a senha correta do arquivo keystore que você está usando)
     *   Clique em **"Add secret"**.
     
-    **Por que isso é importante?** Usar GitHub Secrets mantém senhas seguras e fora do código-fonte. É uma prática essencial de segurança em CI/CD!
+    **Por que isso é importante?** Usar GitHub Secrets mantém senhas seguras e fora do código-fonte. É uma prática essencial de segurança em CI/CD! Nunca commite senhas ou keystores no repositório.
 
 3.  **Execute o Workflow:**
     *   Vá para a aba **Actions** do seu repositório.
@@ -183,3 +183,40 @@ Este projeto é um excelente exemplo prático de conceitos importantes de DevOps
 - Tente usar diferentes triggers (ex: `push`, `pull_request`)
 - Explore notificações quando o workflow terminar (Slack, email, etc.)
 - Adicione validação dos APKs gerados
+
+---
+
+### 🔐 Segurança: Gerenciamento do Keystore
+
+**IMPORTANTE:** O arquivo keystore contém chaves privadas e nunca deve ser commitado no repositório Git!
+
+#### Como o workflow obtém o keystore de forma segura:
+
+1. **Download sob demanda:** O workflow baixa o keystore do repositório oficial do Emacs durante a execução:
+   ```
+   wget -O emacs.keystore "https://raw.githubusercontent.com/emacs-mirror/emacs/master/java/emacs.keystore"
+   ```
+
+2. **Proteção no repositório:** O arquivo `.gitignore` está configurado para bloquear qualquer tentativa de commit de arquivos `.keystore` ou `.jks`.
+
+3. **Senha em GitHub Secrets:** A senha do keystore é armazenada de forma segura em GitHub Secrets, nunca no código-fonte.
+
+#### Alternativas de armazenamento seguro:
+
+Se você precisa usar um keystore personalizado (não o do Emacs oficial), considere estas opções:
+
+- **GitHub Secrets (Base64):** Codifique o keystore em base64 e armazene como secret, depois decodifique no workflow:
+  ```yaml
+  - name: Prepare keystore
+    run: |
+      echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > custom.keystore
+  ```
+
+- **Armazenamento externo protegido:** Use serviços como AWS S3 com acesso restrito ou Google Cloud Storage com autenticação.
+
+- **Artifacts privados:** Use GitHub Packages ou outro registro de artifacts privado para armazenar o keystore de forma segura.
+
+**Nunca:** 
+- ❌ Commite keystores no Git
+- ❌ Compartilhe senhas em documentação ou código
+- ❌ Use keystores em repositórios públicos sem criptografia adequada

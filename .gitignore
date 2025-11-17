@@ -217,3 +217,7 @@ __marimo__/
 
 # Build and development tools
 actionlint
+
+# Android keystore files - never commit these!
+*.keystore
+*.jks
